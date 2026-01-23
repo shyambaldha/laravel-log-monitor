@@ -303,9 +303,11 @@ Developed with ❤️ for Laravel developers who want to stay informed about the
 
 ## 📞 Support
 
-- **Issues:** [GitHub Issues](https://github.com/eheuristic/laravel-log-monitor/issues)
-- **Email:** your.email@example.com
-- **Documentation:** [Full Documentation](https://github.com/eheuristic/laravel-log-monitor)
+- **Issues:** [GitHub Issues](https://github.com/shyambaldha/laravel-log-monitor/issues)
+- **Email:**
+  - shyam.b@eheuristic.com
+  - girish@eheuristic.com
+- **Documentation:** [Full Documentation](https://github.com/shyambaldha/laravel-log-monitor)
 
 ## 🔗 Related Packages
 
