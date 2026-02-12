@@ -33,6 +33,17 @@ class LogAnalyzer
     }
 
     /**
+     * Normalize path for display (convert backslashes to slashes).
+     *
+     * @param string $path
+     * @return string
+     */
+    protected function normalizePath($path)
+    {
+        return str_replace('\\', '/', $path);
+    }
+
+    /**
      * Get log file for a specific date.
      *
      * @param Carbon $date
@@ -76,6 +87,10 @@ class LogAnalyzer
             'exists' => true,
             'filepath' => $filepath,
             'filename' => basename($filepath),
+            'display_path'  => $this->normalizePath($filepath),
+            'relative_path' => $this->normalizePath(
+                ltrim(str_replace(base_path(), '', $filepath), DIRECTORY_SEPARATOR)
+            ),
             'errors' => $errors,
             'error_count' => count($errors),
             'file_size' => $fileSize,

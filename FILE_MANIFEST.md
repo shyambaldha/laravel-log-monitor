@@ -11,8 +11,7 @@ laravel-log-monitor/
 ├── README.md                                     # Main documentation
 ├── INSTALLATION.md                               # Detailed installation guide
 ├── COMPATIBILITY.md                              # Laravel 8-11 compatibility info
-├── CHANGELOG.md                                  # Version history & changes
-├── QUICKSTART.md                                 # Quick start guide
+├── FILE_MANIFEST.md                              # File structure
 ├── config/
 │   └── log-monitor.php                          # Configuration file
 ├── src/
@@ -25,45 +24,50 @@ laravel-log-monitor/
 │   └── Services/
 │       └── LogAnalyzer.php                      # Log parsing service
 └── resources/
-    └── views/
-        └── emails/
-            └── log-report.blade.php             # Email template
+    ├── views/
+    │   └── emails/
+    │       └── log-report.blade.php             # Email template
+    └── assets/                                  # Email template assets
+        ├── application-log-report.png
+        ├── calendar.png
+        ├── folder.png
+        └── summary-overview.png
 ```
 
 ## 📄 File Details
 
 ### Root Files
 
-| File               | Lines | Purpose                                          |
-| ------------------ | ----- | ------------------------------------------------ |
-| `composer.json`    | 45    | Package configuration, dependencies, autoloading |
-| `LICENSE`          | 21    | MIT License text                                 |
-| `README.md`        | 400+  | Main documentation, features, usage              |
-| `INSTALLATION.md`  | 500+  | Step-by-step installation guide                  |
-| `COMPATIBILITY.md` | 300+  | Laravel 8-11 compatibility details               |
-| `CHANGELOG.md`     | 200+  | Version history and roadmap                      |
-| `QUICKSTART.md`    | 100+  | Quick start guide (5 minutes)                    |
+| File               | Purpose                                          |
+| ------------------ | ------------------------------------------------ |
+| `composer.json`    | Package configuration, dependencies, autoloading |
+| `LICENSE`          | MIT License text                                 |
+| `README.md`        | Main documentation, features, usage              |
+| `INSTALLATION.md`  | Step-by-step installation guide                  |
+| `COMPATIBILITY.md` | Laravel 8-11 compatibility details               |
+| `FILE_MANIFEST.md` | File structure documentation                     |
 
 ### Configuration Files (config/)
 
-| File              | Lines | Purpose                           |
-| ----------------- | ----- | --------------------------------- |
-| `log-monitor.php` | 100+  | All package configuration options |
+| File              | Purpose                           |
+| ----------------- | --------------------------------- |
+| `log-monitor.php` | All package configuration options |
 
 ### Source Files (src/)
 
-| File                                        | Lines | Purpose                        |
-| ------------------------------------------- | ----- | ------------------------------ |
-| `LogMonitorServiceProvider.php`             | 45    | Registers package with Laravel |
-| `Console/Commands/SendLogReportCommand.php` | 140+  | CLI command implementation     |
-| `Mail/LogReportMail.php`                    | 75    | Email generation and sending   |
-| `Services/LogAnalyzer.php`                  | 200+  | Log file parsing and analysis  |
+| File                                        | Purpose                        |
+| ------------------------------------------- | ------------------------------ |
+| `LogMonitorServiceProvider.php`             | Registers package with Laravel |
+| `Console/Commands/SendLogReportCommand.php` | CLI command implementation     |
+| `Mail/LogReportMail.php`                    | Email generation and sending   |
+| `Services/LogAnalyzer.php`                  | Log file parsing and analysis  |
 
-### View Files (resources/views/)
+### Views & Assets
 
-| File                          | Lines | Purpose             |
-| ----------------------------- | ----- | ------------------- |
-| `emails/log-report.blade.php` | 250+  | HTML email template |
+| File                                          | Purpose                           |
+| --------------------------------------------- | --------------------------------- |
+| `resources/views/emails/log-report.blade.php` | HTML email template               |
+| `resources/assets/*`                          | Images used in the email template |
 
 ## 🎨 File Categories
 
@@ -82,25 +86,25 @@ laravel-log-monitor/
 
 1. `resources/views/emails/log-report.blade.php` - Email design
 
-### Documentation (7 files)
+### Documentation (8 files)
 
 1. `README.md` - Main docs
 2. `INSTALLATION.md` - Setup guide
 3. `COMPATIBILITY.md` - Version info
-4. `CHANGELOG.md` - Changes
-5. `QUICKSTART.md` - Quick guide
-6. `LICENSE` - License
-7. `composer.json` - Package meta
+4. `LICENSE` - License
+5. `composer.json` - Package meta
+6. `FILE_MANIFEST.md` - File structure
 
 ## 📝 Line Count Summary
 
-| Category      | Files  | Approximate Lines |
-| ------------- | ------ | ----------------- |
-| Source Code   | 4      | ~500 lines        |
-| Configuration | 1      | ~100 lines        |
-| Templates     | 1      | ~250 lines        |
-| Documentation | 7      | ~2000 lines       |
-| **Total**     | **13** | **~2850 lines**   |
+| Category      | Files  |
+| ------------- | ------ |
+| Source Code   | 4      |
+| Configuration | 1      |
+| Templates     | 1      |
+| Assets        | 4      |
+| Documentation | 8      |
+| **Total**     | **18** |
 
 ## 🔍 File Dependencies
 
@@ -109,22 +113,25 @@ composer.json
     └── Defines autoloading for all src/ files
 
 LogMonitorServiceProvider.php
-    ├── Registers: SendLogReportCommand
-    ├── Publishes: config/log-monitor.php
-    └── Loads: resources/views/
+    ├── Registers SendLogReportCommand
+    ├── Publishes config file
+    ├── Publishes views
+    ├── Publishes assets
+    └── Loads package views
 
 SendLogReportCommand.php
-    ├── Uses: LogAnalyzer
-    ├── Uses: LogReportMail
-    └── Reads: config/log-monitor.php
+    ├── Uses LogAnalyzer
+    ├── Uses LogReportMail
+    └── Reads config/log-monitor.php
 
 LogAnalyzer.php
-    ├── Reads: config/log-monitor.php
-    └── Analyzes: storage/logs/*.log
+    ├── Reads config/log-monitor.php
+    └── Analyzes storage/logs/*.log
 
 LogReportMail.php
-    ├── Uses: resources/views/emails/log-report.blade.php
-    └── Reads: config/log-monitor.php
+    ├── Uses resources/views/emails/log-report.blade.php
+    ├── Uses published assets (images)
+    └── Reads config/log-monitor.php
 ```
 
 ## 📦 What Gets Published?
@@ -144,6 +151,13 @@ vendor/.../resources/views/emails/log-report.blade.php
     →  resources/views/vendor/log-monitor/emails/log-report.blade.php
 ```
 
+### Published by `--tag=log-monitor-assets`
+
+```
+vendor/eheuristic/laravel-log-monitor/resources/assets/*
+    → public/vendor/log-monitor/*
+```
+
 ## 🚀 Installation File Placement
 
 When installing locally for development:
@@ -156,8 +170,7 @@ your-laravel-project/
 │   ├── README.md
 │   ├── INSTALLATION.md
 │   ├── COMPATIBILITY.md
-│   ├── CHANGELOG.md
-│   ├── QUICKSTART.md
+│   ├── FILE_MANIFEST.md
 │   ├── config/
 │   │   └── log-monitor.php
 │   ├── src/
@@ -170,9 +183,14 @@ your-laravel-project/
 │   │   └── Services/
 │   │       └── LogAnalyzer.php
 │   └── resources/
-│       └── views/
-│           └── emails/
-│               └── log-report.blade.php
+│       ├── views/
+│       │   └── emails/
+│       │       └── log-report.blade.php
+|       └── assets/                                  # Email template assets
+|               ├── application-log-report.png
+|               ├── calendar.png
+|               ├── folder.png
+|               └── summary-overview.png
 └── composer.json                                # Add repository here
 ```
 
@@ -192,12 +210,19 @@ Use this checklist when setting up the package:
 - [ ] `src/Services/LogAnalyzer.php`
 - [ ] `resources/views/emails/log-report.blade.php`
 
+### Assets (Recommended)
+
+- [ ] `resources/assets/application-log-report.png`
+- [ ] `resources/assets/calendar.png`
+- [ ] `resources/assets/folder.png`
+- [ ] `resources/assets/summary-overview.png`
+
 ### Documentation Files (Recommended)
 
+- [ ] `README.md`
 - [ ] `INSTALLATION.md`
 - [ ] `COMPATIBILITY.md`
-- [ ] `CHANGELOG.md`
-- [ ] `QUICKSTART.md`
+- [ ] `FILE_MANIFEST.md`
 
 ## 🔄 File Update Priority
 
@@ -242,4 +267,4 @@ Users typically customize these files:
 
 **Total Package Size:** ~150KB (including all documentation)
 
-**Last Updated:** 2025-01-23
+**Last Updated:** 2026-02-12

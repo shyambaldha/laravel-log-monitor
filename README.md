@@ -147,7 +147,6 @@ Edit `config/log-monitor.php` to customize:
 ```php
 'subject_template' => '[{app_name}] Log Report - {date} ({error_count} errors)',
 'max_file_size_mb' => 10,  // Max attachment size
-'max_errors_display' => 20,  // Max errors shown in email body
 ```
 
 ## 📧 Email Template
@@ -285,7 +284,6 @@ Mail::raw('Test', function($msg) {
 | `date_format` | string | `Y-m-d` | Log file date format |
 | `subject_template` | string | See config | Email subject template |
 | `max_file_size_mb` | integer | `10` | Max attachment size (MB) |
-| `max_errors_display` | integer | `20` | Max errors in email |
 | `from_address` | string | `MAIL_FROM_ADDRESS` | Sender email |
 | `from_name` | string | `MAIL_FROM_NAME` | Sender name |
 

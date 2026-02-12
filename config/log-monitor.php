@@ -49,10 +49,14 @@ return [
     |
     */
     'monitor_levels' => [
-        'emergency',
-        'alert',
-        'critical',
-        'error',
+        'emergency',  // System is unusable
+        'alert',      // Action must be taken immediately
+        'critical',   // Critical conditions
+        'error',      // Runtime errors
+        'warning',    // Exceptional occurrences that are not errors
+        // 'notice',  // Normal but significant events
+        // 'info',    // Interesting events
+        // 'debug',   // Detailed debug information
     ],
 
     /*
@@ -132,14 +136,23 @@ return [
 
     /*
     |--------------------------------------------------------------------------
-    | Max Errors to Display
+    | Log Monitor Package Assets
     |--------------------------------------------------------------------------
     |
-    | Maximum number of errors to display in the email body.
-    | If more errors exist, a note will be shown indicating additional errors.
+    | These assets are used inside email templates and views.
+    | Assets will be published to:
     |
-    | This prevents extremely long emails when many errors occur.
+    |   public/vendor/log-monitor/assets
+    |
+    | You can override these files by replacing them after publish
+    | without touching the package code.
     |
     */
-    'max_errors_display' => 20,
+
+    'assets' => [
+        'summaryOverviewIcon' => 'summary-overview.png',
+        'applicationLogReportIcon' => 'application-log-report.png',
+        'folderIcon' => 'folder.png',
+        'calendarIcon' => 'calendar.png',
+    ],
 ];

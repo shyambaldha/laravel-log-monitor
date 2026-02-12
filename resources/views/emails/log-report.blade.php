@@ -1,292 +1,384 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml" xmlns:v="urn:schemas-microsoft-com:vml"
+    xmlns:o="urn:schemas-microsoft-com:office:office">
 
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Log Report - {{ $reportDate->format('Y-m-d') }}</title>
-    <style>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="x-apple-disable-message-reformatting">
+    <title>Daily Log Report - {{ $reportDate->format('Y-m-d') }}</title>
+    <!--[if mso]>
+    <style type="text/css">
+        table {border-collapse: collapse !important;}
+        .container {width: 600px !important;}
+    </style>
+    <noscript>
+        <xml>
+            <o:OfficeDocumentSettings>
+                <o:PixelsPerInch>96</o:PixelsPerInch>
+            </o:OfficeDocumentSettings>
+        </xml>
+    </noscript>
+    <![endif]-->
+    <style type="text/css">
+        /* Reset and Base Styles */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body,
+        table,
+        td,
+        a {
+            -webkit-text-size-adjust: 100%;
+            -ms-text-size-adjust: 100%;
+        }
+
+        table {
+            border-collapse: collapse !important;
+            mso-table-lspace: 0pt;
+            mso-table-rspace: 0pt;
+        }
+
+        img {
+            -ms-interpolation-mode: bicubic;
+            border: 0;
+            height: auto;
+            line-height: 100%;
+            outline: none;
+            text-decoration: none;
+            display: block;
+        }
+
         body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
-            line-height: 1.6;
-            color: #333333;
-            max-width: 800px;
-            margin: 0 auto;
-            padding: 20px;
-            background-color: #f5f5f5;
+            margin: 0 !important;
+            padding: 0 !important;
+            width: 100% !important;
+            height: 100% !important;
         }
 
-        .container {
-            background-color: #ffffff;
-            border-radius: 8px;
-            padding: 30px;
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        p {
+            margin: 0;
+            padding: 0;
         }
 
-        .header {
-            border-bottom: 3px solid #e74c3c;
-            padding-bottom: 20px;
-            margin-bottom: 30px;
+        /* Client-specific Styles */
+        #outlook a {
+            padding: 0;
         }
 
-        h1 {
-            color: #2c3e50;
-            margin: 0 0 10px 0;
-            font-size: 28px;
-            font-weight: 600;
+        .ExternalClass {
+            width: 100%;
         }
 
-        .date {
-            color: #7f8c8d;
-            font-size: 14px;
+        .ExternalClass,
+        .ExternalClass p,
+        .ExternalClass span,
+        .ExternalClass font,
+        .ExternalClass td,
+        .ExternalClass div {
+            line-height: 100%;
         }
 
-        .summary {
-            background-color: #ecf0f1;
-            border-left: 4px solid #3498db;
-            padding: 15px 20px;
-            margin: 20px 0;
-            border-radius: 4px;
-        }
+        /* Mobile Styles */
+        @media only screen and (max-width: 600px) {
+            .email-container {
+                width: 100% !important;
+                margin: auto !important;
+            }
 
-        .summary h2 {
-            margin: 0 0 10px 0;
-            color: #2c3e50;
-            font-size: 18px;
-            font-weight: 600;
-        }
+            .fluid,
+            .fluid-centered {
+                width: 100% !important;
+                max-width: 100% !important;
+                height: auto !important;
+                margin-left: auto !important;
+                margin-right: auto !important;
+                text-align: center !important;
+            }
 
-        .summary-item {
-            display: flex;
-            justify-content: space-between;
-            padding: 5px 0;
-        }
+            .stack-column,
+            .stack-column-center {
+                display: block !important;
+                width: 100% !important;
+                max-width: 100% !important;
+                direction: ltr !important;
+            }
 
-        .summary-label {
-            font-weight: 600;
-            color: #555555;
-        }
+            .mobile-padding {
+                padding: 15px !important;
+            }
 
-        .summary-value {
-            color: #e74c3c;
-            font-weight: 700;
-        }
+            .mobile-padding-small {
+                padding: 10px !important;
+            }
 
-        .error-section {
-            margin-top: 30px;
-        }
+            .mobile-hide {
+                display: none !important;
+            }
 
-        .error-section h2 {
-            color: #2c3e50;
-            font-size: 20px;
-            margin-bottom: 20px;
-        }
+            .mobile-center {
+                text-align: center !important;
+            }
 
-        .error-item {
-            background-color: #fff5f5;
-            border: 1px solid #fee;
-            border-left: 4px solid #e74c3c;
-            padding: 15px;
-            margin-bottom: 15px;
-            border-radius: 4px;
-        }
+            .mobile-font-size-large {
+                font-size: 26px !important;
+            }
 
-        .error-header {
-            display: flex;
-            justify-content: space-between;
-            margin-bottom: 10px;
-            flex-wrap: wrap;
-            gap: 10px;
-        }
-
-        .error-level {
-            background-color: #e74c3c;
-            color: white;
-            padding: 4px 12px;
-            border-radius: 3px;
-            font-size: 12px;
-            font-weight: 700;
-            text-transform: uppercase;
-        }
-
-        .error-level.emergency {
-            background-color: #8e44ad;
-        }
-
-        .error-level.alert {
-            background-color: #c0392b;
-        }
-
-        .error-level.critical {
-            background-color: #e74c3c;
-        }
-
-        .error-level.error {
-            background-color: #e67e22;
-        }
-
-        .error-timestamp {
-            color: #7f8c8d;
-            font-size: 13px;
-        }
-
-        .error-message {
-            color: #2c3e50;
-            font-weight: 500;
-            margin: 10px 0;
-            word-wrap: break-word;
-        }
-
-        .stack-trace {
-            background-color: #2c3e50;
-            color: #ecf0f1;
-            padding: 12px;
-            border-radius: 4px;
-            font-family: 'Courier New', Consolas, Monaco, monospace;
-            font-size: 12px;
-            overflow-x: auto;
-            margin-top: 10px;
-            white-space: pre-wrap;
-            word-wrap: break-word;
-        }
-
-        .no-errors {
-            background-color: #d4edda;
-            border: 1px solid #c3e6cb;
-            border-left: 4px solid #28a745;
-            color: #155724;
-            padding: 20px;
-            border-radius: 4px;
-            text-align: center;
-            font-size: 16px;
-        }
-
-        .footer {
-            margin-top: 30px;
-            padding-top: 20px;
-            border-top: 1px solid #ddd;
-            color: #7f8c8d;
-            font-size: 13px;
-            text-align: center;
-        }
-
-        .file-info {
-            background-color: #e8f4f8;
-            border-left: 4px solid #3498db;
-            padding: 12px;
-            margin: 15px 0;
-            border-radius: 4px;
-            font-size: 13px;
-        }
-
-        .file-info strong {
-            color: #2c3e50;
-        }
-
-        .more-errors-notice {
-            background-color: #fff3cd;
-            border: 1px solid #ffeaa7;
-            border-left: 4px solid #ffc107;
-            color: #856404;
-            padding: 15px;
-            margin: 15px 0;
-            border-radius: 4px;
-            text-align: center;
+            .mobile-font-size {
+                font-size: 14px !important;
+            }
         }
     </style>
 </head>
 
-<body>
-    <div class="container">
-        <div class="header">
-            <h1>📋 Laravel Log Report</h1>
-            <div class="date">{{ config('app.name') }} - {{ $reportDate->format('l, F j, Y') }}</div>
-        </div>
+<body
+    style="margin: 0; padding: 0; background-color: #f4f7fa; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;">
 
-        <div class="summary">
-            <h2>Summary</h2>
-            <div class="summary-item">
-                <span class="summary-label">Total Errors:</span>
-                <span class="summary-value">{{ $summary['total_errors'] }}</span>
-            </div>
-            @if (!empty($summary['by_level']))
-                @foreach ($summary['by_level'] as $level => $count)
-                    <div class="summary-item">
-                        <span class="summary-label">{{ ucfirst($level) }}:</span>
-                        <span class="summary-value">{{ $count }}</span>
-                    </div>
-                @endforeach
-            @endif
-            <div class="summary-item">
-                <span class="summary-label">Log File Size:</span>
-                <span>{{ $analysis['file_size_mb'] }} MB</span>
-            </div>
-        </div>
-
-        @if ($analysis['exists'])
-            <div class="file-info">
-                <strong>📁 Log File:</strong> {{ $analysis['filename'] }}<br>
-                <strong>📍 Path:</strong> {{ $analysis['filepath'] }}
-            </div>
-        @endif
-
+    <!-- Preheader Text -->
+    <div
+        style="display: none; font-size: 1px; color: #fefefe; line-height: 1px; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Arial, sans-serif; max-height: 0px; max-width: 0px; opacity: 0; overflow: hidden;">
         @if ($analysis['error_count'] > 0)
-            <div class="error-section">
-                @php
-                    $maxDisplay = config('log-monitor.max_errors_display', 20);
-                    $displayErrors = array_slice($analysis['errors'], 0, $maxDisplay);
-                    $remainingCount = count($analysis['errors']) - count($displayErrors);
-                @endphp
-
-                <h2>Error Details (Top {{ count($displayErrors) }} shown)</h2>
-
-                @foreach ($displayErrors as $index => $error)
-                    <div class="error-item">
-                        <div class="error-header">
-                            <span class="error-level {{ strtolower($error['level']) }}">
-                                {{ $error['level'] }}
-                            </span>
-                            <span class="error-timestamp">
-                                🕐 {{ $error['timestamp'] ?? 'Unknown time' }}
-                            </span>
-                        </div>
-
-                        <div class="error-message">
-                            {{ $error['message'] }}
-                        </div>
-
-                        @if (!empty($error['stack_trace']))
-                            <div class="stack-trace">{{ $error['stack_trace'] }}</div>
-                        @endif
-                    </div>
-                @endforeach
-
-                @if ($remainingCount > 0)
-                    <div class="more-errors-notice">
-                        ⚠️ <strong>{{ $remainingCount }} more error(s)</strong> found in the log file.
-                        Please check the attached file or log file directly for complete details.
-                    </div>
-                @endif
-            </div>
+            ⚠️ {{ $summary['total_errors'] }} error(s) detected in your Laravel application on
+            {{ $reportDate->format('M d, Y') }}
         @else
-            <div class="no-errors">
-                ✅ <strong>No errors found!</strong> Your application ran smoothly on this day.
-            </div>
+            ✅ No errors detected - Your application is running smoothly
         @endif
-
-        <div class="footer">
-            <p>
-                This is an automated report from <strong>{{ config('app.name') }}</strong><br>
-                Generated at {{ now()->format('Y-m-d H:i:s') }}
-            </p>
-            @if ($analysis['file_size_mb'] > config('log-monitor.max_file_size_mb'))
-                <p style="color: #e67e22; margin-top: 10px;">
-                    ⚠️ Log file was too large ({{ $analysis['file_size_mb'] }}MB) to attach.
-                    Please check the log file directly on the server.
-                </p>
-            @endif
-        </div>
     </div>
+
+    <!-- Full Email Container -->
+    <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%"
+        style="margin: 0; padding: 0; background-color: #f4f7fa;">
+        <tr>
+            <td style="padding: 40px 15px;">
+
+                <!-- Main Email Card -->
+                <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="600"
+                    class="email-container" align="center"
+                    style="margin: auto; max-width: 600px; background-color: #ffffff; border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.08); overflow: hidden;">
+
+                    <!-- Header with Gradient -->
+                    <tr>
+                        <td style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); padding: 0;">
+                            <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%">
+                                <tr>
+                                    <td style="padding: 40px 30px 35px 30px; text-align: center;">
+                                        <!-- App Logo/Icon -->
+                                        <div style="margin-bottom: 20px;">
+                                            <div
+                                                style="display: inline-block; width: 56px; height: 56px; background-color: rgba(255,255,255,0.2); border-radius: 14px; padding: 12px; backdrop-filter: blur(10px);">
+                                                <div
+                                                    style="width: 32px; height: 32px; border-radius: 6px; position: relative;">
+                                                    <div
+                                                        style="position: absolute; bottom: 4px; left: 4px; right: 4px; height: 10px; border-radius: 2px;">
+                                                        <img src="{{ $assets['applicationLogReportIcon'] }}"
+                                                            width="32" alt="Application Log Report Icon" />
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <h1 style="margin: 0 0 12px 0; color: #ffffff; font-size: 32px; font-weight: 700; letter-spacing: -0.5px; line-height: 1.2;"
+                                            class="mobile-font-size-large">
+                                            Application Log Report
+                                        </h1>
+                                        <p style="margin: 0 0 20px 0; color: rgba(255,255,255,0.95); font-size: 20px; font-weight: 600; letter-spacing: 0.3px;"
+                                            class="mobile-font-size">
+                                            {{ config('app.name') }}
+                                        </p>
+                                        <div
+                                            style="margin:0; padding:12px 24px; background-color:rgba(255,255,255,0.15); border-radius:24px; display:inline-block;">
+                                            <img src="{{ $assets['calendarIcon'] }}" width="20" height="20"
+                                                style="display:inline-block;vertical-align:middle;margin-right:8px;border:0;"alt="Date">
+
+                                            <span
+                                                style="display:inline-block;vertical-align:middle;color:#ffffff;font-size:14px;font-weight:600;white-space:nowrap;">
+                                                {{ $reportDate->format('l, F j, Y') }}
+                                            </span>
+                                        </div>
+                                    </td>
+                                </tr>
+                            </table>
+                        </td>
+                    </tr>
+
+                    <!-- Summary Section -->
+                    <tr>
+                        <td style="padding: 35px 30px 25px 30px;">
+                            <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%">
+                                <tr>
+                                    <td style="padding-bottom:20px;">
+                                        <table role="presentation" cellspacing="0" cellpadding="0" border="0">
+                                            <tr>
+                                                <td style="padding-right:10px; vertical-align:middle;">
+                                                    <img src="{{ $assets['summaryOverviewIcon'] }}" width="30"
+                                                        alt="Summary Overview Icon" />
+                                                </td>
+
+                                                <!-- TITLE -->
+                                                <td style="vertical-align:middle;">
+                                                    <h2 style="margin:0;color:#1a202c;font-size:22px;font-weight:700;">
+                                                        Summary Overview
+                                                    </h2>
+                                                </td>
+                                            </tr>
+                                        </table>
+                                    </td>
+                                </tr>
+                            </table>
+
+
+                            <!-- Metric Cards Grid -->
+                            <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%">
+                                <tr>
+                                    <!-- Total Errors Card -->
+                                    <td width="100%" style="vertical-align: top; padding: 0 6px 14px 0;">
+                                        <table role="presentation" cellspacing="0" cellpadding="0" border="0"
+                                            width="100%"
+                                            style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%); border-radius: 12px; box-shadow: 0 4px 10px rgba(245, 87, 108, 0.25);">
+                                            <tr>
+                                                <td style="padding: 24px 20px; text-align: center;">
+                                                    <div
+                                                        style="font-size: 42px; font-weight: 800; color: #ffffff; line-height: 1; margin-bottom: 8px; letter-spacing: -1px;">
+                                                        {{ $summary['total_errors'] }}
+                                                    </div>
+                                                    <div
+                                                        style="font-size: 11px; font-weight: 700; color: rgba(255,255,255,0.95); text-transform: uppercase; letter-spacing: 1px;">
+                                                        Total Errors
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                        </table>
+                                    </td>
+                                </tr>
+                            </table>
+                        </td>
+                    </tr>
+
+                    @if ($analysis['exists'])
+                        <!-- File Information -->
+                        <tr>
+                            <td style="padding: 0 30px 25px 30px;">
+                                <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%"
+                                    style="background: linear-gradient(to right, #eff6ff, #dbeafe); border-left: 4px solid #3b82f6; border-radius: 10px; box-shadow: 0 1px 3px rgba(0,0,0,0.03);">
+                                    <tr>
+                                        <td style="padding: 18px 20px;">
+                                            <table role="presentation" cellspacing="0" cellpadding="0" border="0"
+                                                width="100%">
+                                                <tr>
+                                                    <td style="padding-bottom:10px;">
+                                                        <img src="{{ $assets['folderIcon'] }}" width="20"
+                                                            height="20"
+                                                            style="display:inline-block;vertical-align:middle;margin-right:6px;border:0;"
+                                                            alt="Folder">
+                                                        <span
+                                                            style="color:#1e40af;font-weight:800;font-size:12px;text-transform:uppercase;letter-spacing:1px;vertical-align:middle;">
+                                                            Log File Details
+                                                        </span>
+                                                    </td>
+                                                </tr>
+
+                                                <tr>
+                                                    <td style="padding: 5px 0;">
+                                                        <table role="presentation" cellspacing="0" cellpadding="0"
+                                                            border="0" width="100%">
+                                                            <tr>
+                                                                <td style="width: 60px; vertical-align: top;">
+                                                                    <span
+                                                                        style="color: #1e293b; font-size: 13px; font-weight: 700;">Name:</span>
+                                                                </td>
+                                                                <td style="vertical-align: top;">
+                                                                    <span
+                                                                        style="color: #475569; font-size: 13px; font-family: 'Courier New', monospace; word-break: break-all;">{{ $analysis['filename'] }}</span>
+                                                                </td>
+                                                            </tr>
+                                                        </table>
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td style="padding: 5px 0;">
+                                                        <table role="presentation" cellspacing="0" cellpadding="0"
+                                                            border="0" width="100%">
+                                                            <tr>
+                                                                <td style="width: 60px; vertical-align: top;">
+                                                                    <span
+                                                                        style="color: #1e293b; font-size: 13px; font-weight: 700;">Path:</span>
+                                                                </td>
+                                                                <td style="vertical-align: top;">
+                                                                    <span
+                                                                        style="color: #475569; font-size: 12px; font-family: 'Courier New', monospace; word-break: break-all; line-height: 1.5;">{{ $analysis['relative_path'] }}</span>
+                                                                </td>
+                                                            </tr>
+                                                        </table>
+                                                    </td>
+                                                </tr>
+                                            </table>
+                                        </td>
+                                    </tr>
+                                </table>
+                            </td>
+                        </tr>
+                    @endif
+
+                    <!-- Footer -->
+                    <tr>
+                        <td
+                            style="padding: 32px 30px; background: linear-gradient(to bottom, #f9fafb, #f3f4f6); border-top: 1px solid #e5e7eb;">
+                            <table role="presentation" cellspacing="0" cellpadding="0" border="0"
+                                width="100%">
+                                <tr>
+                                    <td style="text-align: center; padding-bottom: 14px;">
+                                        <div
+                                            style="color: #374151; font-size: 14px; line-height: 1.7; font-weight: 600;">
+                                            {{ config('app.name') }}
+                                        </div>
+                                        <div
+                                            style="color: #6b7280; font-size: 13px; line-height: 1.6; margin-top: 4px;">
+                                            Automated Log Monitoring System
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td
+                                        style="text-align: center; padding: 14px 0; border-top: 1px solid #e5e7eb; border-bottom: 1px solid #e5e7eb;">
+                                        <div style="color: #6b7280; font-size: 12px; line-height: 1.6;">
+                                            Generated on {{ now()->format('F j, Y') }} at {{ now()->format('g:i A') }}
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td style="text-align: center; padding-top: 14px;">
+                                        <div style="font-size: 11px; color: #9ca3af; line-height: 1.6;">
+                                            This is an automated email. Please do not reply.<br>
+                                            For support, contact your development team.
+                                        </div>
+                                    </td>
+                                </tr>
+                            </table>
+                        </td>
+                    </tr>
+
+                </table>
+                <!-- End Main Email Card -->
+
+                <!-- Email Footer (Outside Card) -->
+                <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="600"
+                    class="email-container" align="center" style="margin: 20px auto 0; max-width: 600px;">
+                    <tr>
+                        <td style="text-align: center; padding: 20px 15px;">
+                            <p style="margin: 0; color: #9ca3af; font-size: 11px; line-height: 1.5;">
+                                © {{ now()->year }} {{ config('app.name') }}. All rights reserved.<br>
+                                Powered by Laravel Framework
+                            </p>
+                        </td>
+                    </tr>
+                </table>
+            </td>
+        </tr>
+    </table>
 </body>
 
 </html>

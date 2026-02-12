@@ -1,269 +1,375 @@
 # Laravel 8-11 Compatibility Guide
 
-This package is fully compatible with Laravel versions 8.x through 11.x and PHP 7.3 through 8.3.
+This package provides full compatibility with Laravel versions 8.x through 11.x and PHP 7.3 through 8.3.
 
 ## 📊 Version Support Matrix
 
-| Laravel Version | PHP Version | Package Support | Release Date |
-| --------------- | ----------- | --------------- | ------------ |
-| Laravel 8.x     | PHP 7.3+    | ✅ Full Support | Sep 2020     |
-| Laravel 9.x     | PHP 8.0+    | ✅ Full Support | Feb 2022     |
-| Laravel 10.x    | PHP 8.1+    | ✅ Full Support | Feb 2023     |
-| Laravel 11.x    | PHP 8.2+    | ✅ Full Support | Mar 2024     |
+| Laravel Version | PHP Requirements | Support Status     | Released       |
+| --------------- | ---------------- | ------------------ | -------------- |
+| 8.x             | 7.3 - 8.1        | ✅ Fully Supported | September 2020 |
+| 9.x             | 8.0 - 8.2        | ✅ Fully Supported | February 2022  |
+| 10.x            | 8.1 - 8.3        | ✅ Fully Supported | February 2023  |
+| 11.x            | 8.2 - 8.3        | ✅ Fully Supported | March 2024     |
 
-## 🔧 Compatibility Changes
+## Installation
 
-The package has been specifically updated to ensure backward compatibility with Laravel 8 and PHP 7.3 while maintaining forward compatibility with Laravel 11 and PHP 8.3.
+### Standard Installation (All Versions)
 
-### Key Changes for Laravel 8 Compatibility
-
-### 1. Type Hints Removed
-
-**Before (Laravel 9+):**
-
-```php
-public function register(): void
-public function analyzeLogFile(string $filepath): array
+```bash
+composer require eheuristic/laravel-log-monitor
 ```
 
-**After (Laravel 8+):**
+The package automatically detects your Laravel version and adapts accordingly.
 
-```php
-public function register()
-public function analyzeLogFile($filepath)
+### Publish Configuration
+
+```bash
+php artisan vendor:publish --tag=log-monitor-config
 ```
 
-### 2. Property Types Made Compatible
+### Publish Views
 
-**Before (PHP 8+):**
-
-```php
-protected array $config;
-protected string $logPath;
-public bool $attachFile;
+```bash
+php artisan vendor:publish --tag=log-monitor-views
 ```
 
-**After (PHP 7.3+):**
+### Publish Assets
 
-```php
-protected $config;
-protected $logPath;
-public $attachFile;
+```bash
+php artisan vendor:publish --tag=log-monitor-assets
 ```
 
-### 3. Nullable Return Types
+## Configuration by Laravel Version
 
-**Before:**
+### Laravel 8.x - 10.x
 
-```php
-public function getLogFile(Carbon $date): ?string
-```
+**Scheduling Commands**
 
-**After:**
+Edit `app/Console/Kernel.php`:
 
 ```php
-public function getLogFile(Carbon $date)
+<?php
+
+namespace App\Console;
+
+use Illuminate\Console\Scheduling\Schedule;
+use Illuminate\Foundation\Console\Kernel as ConsoleKernel;
+
+class Kernel extends ConsoleKernel
+{
+    protected function schedule(Schedule $schedule)
+    {
+        $schedule->command('log:send-report')
+                 ->dailyAt('01:00');
+    }
+}
 ```
 
-## Installation by Laravel Version
+### Laravel 11.x
+
+Laravel 11 introduced streamlined application structure with two scheduling options:
+
+**Option 1: Using routes/console.php (Recommended)**
+
+```php
+<?php
+
+use Illuminate\Support\Facades\Schedule;
+
+Schedule::command('log:send-report')->dailyAt('01:00');
+```
+
+**Option 2: Traditional Kernel.php (Still Supported)**
+
+If you prefer the traditional approach, create `app/Console/Kernel.php`:
+
+```php
+<?php
+
+namespace App\Console;
+
+use Illuminate\Console\Scheduling\Schedule;
+use Illuminate\Foundation\Console\Kernel as ConsoleKernel;
+
+class Kernel extends ConsoleKernel
+{
+    protected function schedule(Schedule $schedule)
+    {
+        $schedule->command('log:send-report')
+                 ->dailyAt('01:00');
+    }
+}
+```
+
+## Testing Installation
 
 ### Laravel 8.x
 
 ```bash
-composer require eheuristic/laravel-log-monitor
-```
+# Create test project
+composer create-project laravel/laravel:^8.0 test-project
+cd test-project
 
-**Kernel.php Location:** `app/Console/Kernel.php`
-
-```php
-protected function schedule(Schedule $schedule)
-{
-    $schedule->command('log:send-report')
-             ->dailyAt('01:00');
-}
-```
-
-### Laravel 9.x - 11.x
-
-Same installation process. The package auto-detects the Laravel version.
-
-```bash
-composer require eheuristic/laravel-log-monitor
-```
-
-**Kernel.php Location (Laravel 11):** May use routes/console.php instead
-
-## Testing Compatibility
-
-### Test on Laravel 8
-
-```bash
-# Ensure PHP 7.3+ is active
+# Verify PHP version (7.3+)
 php -v
 
-# Install Laravel 8 project
-composer create-project laravel/laravel:^8.0 test-laravel8
-cd test-laravel8
-
-# Add package
+# Install package
 composer require eheuristic/laravel-log-monitor
 
-# Publish and test
+# Publish and verify
 php artisan vendor:publish --tag=log-monitor-config
 php artisan log:send-report --help
 ```
 
-### Test on Laravel 9-11
+### Laravel 9.x
 
 ```bash
-# For Laravel 11
-composer create-project laravel/laravel:^11.0 test-laravel11
-cd test-laravel11
+# Create test project
+composer create-project laravel/laravel:^9.0 test-project
+cd test-project
 
-# Add package
+# Verify PHP version (8.0+)
+php -v
+
+# Install package
 composer require eheuristic/laravel-log-monitor
 
-# Test
+# Test command
 php artisan log:send-report --help
 ```
 
-## Laravel 11 Specific Notes
-
-Laravel 11 introduced some directory structure changes, but this package remains compatible:
-
-### Scheduling in Laravel 11
-
-If using the new `routes/console.php` approach:
-
-```php
-use Illuminate\Support\Facades\Schedule;
-
-Schedule::command('log:send-report')
-    ->dailyAt('01:00');
-```
-
-Or traditional `app/Console/Kernel.php` (still supported):
-
-```php
-protected function schedule(Schedule $schedule)
-{
-    $schedule->command('log:send-report')
-             ->dailyAt('01:00');
-}
-```
-
-### Service Provider Auto-Discovery
-
-All Laravel versions (8-11) support auto-discovery. The package will be automatically registered.
-
-## Feature Compatibility Matrix
-
-| Feature           | L8  | L9  | L10 | L11 |
-| ----------------- | --- | --- | --- | --- |
-| Auto-discovery    | ✅  | ✅  | ✅  | ✅  |
-| Config publishing | ✅  | ✅  | ✅  | ✅  |
-| View publishing   | ✅  | ✅  | ✅  | ✅  |
-| Artisan command   | ✅  | ✅  | ✅  | ✅  |
-| Mail sending      | ✅  | ✅  | ✅  | ✅  |
-| Task scheduling   | ✅  | ✅  | ✅  | ✅  |
-| Log file analysis | ✅  | ✅  | ✅  | ✅  |
-
-## Known Differences
-
-### Carbon Namespace
-
-All versions use `Carbon\Carbon` - no changes needed.
-
-### Mail API
-
-Mailable class structure is identical across all versions - no changes needed.
-
-### File System
-
-`Illuminate\Support\Facades\File` works identically across all versions.
-
-### Command Class
-
-Artisan command structure is backward compatible.
-
-## Troubleshooting by Version
-
-### Laravel 8
-
-**Issue:** Service provider not found  
-**Solution:** Run `composer dump-autoload`
-
-**Issue:** Config not publishing  
-**Solution:** Clear config cache: `php artisan config:clear`
-
-### Laravel 9+
-
-**Issue:** Type errors  
-**Solution:** This shouldn't happen as all type hints are removed for compatibility
-
-### Laravel 11
-
-**Issue:** Schedule not running  
-**Solution:** Check both `app/Console/Kernel.php` and `routes/console.php`
-
-## Migration Between Versions
-
-If upgrading your Laravel application:
-
-1. The package continues working without changes
-2. No configuration changes needed
-3. No code modifications required
-4. Re-publish config if needed: `php artisan vendor:publish --tag=log-monitor-config --force`
-
-## Testing on Multiple Versions
-
-To test the package across versions:
+### Laravel 10.x
 
 ```bash
-# Laravel 8 (PHP 7.3)
-docker run -v $(pwd):/app -w /app php:7.3-cli composer test-laravel8
+# Create test project
+composer create-project laravel/laravel:^10.0 test-project
+cd test-project
 
-# Laravel 9 (PHP 8.0)
-docker run -v $(pwd):/app -w /app php:8.0-cli composer test-laravel9
+# Verify PHP version (8.1+)
+php -v
 
-# Laravel 10 (PHP 8.1)
-docker run -v $(pwd):/app -w /app php:8.1-cli composer test-laravel10
+# Install package
+composer require eheuristic/laravel-log-monitor
 
-# Laravel 11 (PHP 8.2)
-docker run -v $(pwd):/app -w /app php:8.2-cli composer test-laravel11
+# Test command
+php artisan log:send-report --help
 ```
 
-## Backward Compatibility Promise
-
-This package maintains backward compatibility with:
-
-- ✅ Laravel 8.0 to 8.x
-- ✅ Laravel 9.0 to 9.x
-- ✅ Laravel 10.0 to 10.x
-- ✅ Laravel 11.0 to 11.x
-- ✅ PHP 7.3 to PHP 8.3
-
-## Future Laravel Versions
-
-The package architecture is designed to be forward-compatible. When Laravel 12 releases, we expect minimal or no changes needed.
-
-## Getting Help
-
-If you encounter version-specific issues:
-
-1. Check your Laravel version: `php artisan --version`
-2. Check your PHP version: `php -v`
-3. Clear all caches: `php artisan cache:clear && php artisan config:clear`
-4. Re-publish config: `php artisan vendor:publish --tag=log-monitor-config --force`
-
-## Reporting Version Issues
-
-When reporting issues, please include:
+### Laravel 11.x
 
 ```bash
+# Create test project
+composer create-project laravel/laravel:^11.0 test-project
+cd test-project
+
+# Verify PHP version (8.2+)
+php -v
+
+# Install package
+composer require eheuristic/laravel-log-monitor
+
+# Test command
+php artisan log:send-report --help
+```
+
+## Feature Compatibility
+
+All features work identically across all supported Laravel versions:
+
+| Feature                  | Laravel 8 | Laravel 9 | Laravel 10 | Laravel 11 |
+| ------------------------ | --------- | --------- | ---------- | ---------- |
+| Package Auto-Discovery   | ✅        | ✅        | ✅         | ✅         |
+| Configuration Publishing | ✅        | ✅        | ✅         | ✅         |
+| View Publishing          | ✅        | ✅        | ✅         | ✅         |
+| Artisan Commands         | ✅        | ✅        | ✅         | ✅         |
+| Email Notifications      | ✅        | ✅        | ✅         | ✅         |
+| Task Scheduling          | ✅        | ✅        | ✅         | ✅         |
+| Log File Parsing         | ✅        | ✅        | ✅         | ✅         |
+| Custom Channels          | ✅        | ✅        | ✅         | ✅         |
+
+## Laravel 11 Specific Changes
+
+Laravel 11 introduced architectural improvements while maintaining backward compatibility:
+
+### Directory Structure
+
+- **Config files**: Published to `config/` (unchanged)
+- **Views**: Published to `resources/views/vendor/log-monitor` (unchanged)
+- **Console scheduling**: Can use either `routes/console.php` or `app/Console/Kernel.php`
+
+### Service Provider Registration
+
+Service providers are automatically discovered via `composer.json`. No manual registration required.
+
+### Bootstrap Changes
+
+Laravel 11's streamlined bootstrap doesn't affect this package. All functionality works without modification.
+
+## Upgrading Between Laravel Versions
+
+When upgrading your Laravel application, the package continues working without changes:
+
+### From Laravel 8 to 9
+
+```bash
+# Upgrade Laravel
+composer update
+
+# No package changes needed
+# Optionally re-publish config
+php artisan vendor:publish --tag=log-monitor-config --force
+```
+
+### From Laravel 9 to 10
+
+```bash
+# Upgrade Laravel and PHP (8.1+)
+composer update
+
+# Clear caches
+php artisan config:clear
+php artisan cache:clear
+```
+
+### From Laravel 10 to 11
+
+```bash
+# Upgrade Laravel and PHP (8.2+)
+composer update
+
+# If migrating to routes/console.php, move schedule from Kernel.php
+# Otherwise, no changes needed
+```
+
+## Troubleshooting
+
+### Common Issues
+
+**Service Provider Not Found (Laravel 8)**
+
+```bash
+composer dump-autoload
+php artisan config:clear
+```
+
+**Config Not Publishing**
+
+```bash
+php artisan config:clear
+php artisan vendor:publish --tag=log-monitor-config --force
+```
+
+**Scheduled Task Not Running (Laravel 11)**
+
+Check both scheduling locations:
+
+- `routes/console.php`
+- `app/Console/Kernel.php` (if it exists)
+
+Verify scheduler is running:
+
+```bash
+php artisan schedule:list
+```
+
+**Type Errors**
+
+Ensure your PHP version matches Laravel requirements. The package removes type hints for maximum compatibility.
+
+### Version-Specific Debugging
+
+Check your environment:
+
+```bash
+# Laravel version
+php artisan --version
+
+# PHP version
+php -v
+
+# Installed packages
+composer show | grep laravel
+
+# Package installation
+composer show eheuristic/laravel-log-monitor
+```
+
+## API Compatibility Notes
+
+### Consistent APIs Across Versions
+
+The following Laravel components work identically across all versions:
+
+- **Carbon**: Uses `Carbon\Carbon` namespace consistently
+- **Mail**: Mailable class structure unchanged
+- **Filesystem**: `Illuminate\Support\Facades\File` API stable
+- **Commands**: Console command structure backward compatible
+- **Config**: Configuration API unchanged
+- **Logging**: Log channel configuration consistent
+
+### No Breaking Changes
+
+This package does not use any Laravel features that changed between versions 8-11, ensuring seamless compatibility.
+
+## Backward Compatibility Guarantee
+
+We commit to maintaining compatibility with:
+
+- ✅ Laravel 8.0+ (minimum PHP 7.3)
+- ✅ Laravel 9.0+ (minimum PHP 8.0)
+- ✅ Laravel 10.0+ (minimum PHP 8.1)
+- ✅ Laravel 11.0+ (minimum PHP 8.2)
+
+No configuration changes or code modifications are required when upgrading Laravel.
+
+## Forward Compatibility
+
+The package is designed with forward compatibility in mind:
+
+- Follows Laravel best practices
+- Avoids deprecated features
+- Uses stable, long-term APIs
+- Regular updates for new Laravel releases
+
+## Reporting Issues
+
+When reporting compatibility issues, please include:
+
+```bash
+# Environment information
 php artisan --version
 php -v
 composer show | grep laravel
+composer show eheuristic/laravel-log-monitor
+
+# Laravel environment
+php artisan env
 ```
 
-This helps identify version-specific problems quickly.
+### Issue Template
+
+```markdown
+**Laravel Version**: X.X
+**PHP Version**: X.X.X
+**Package Version**: X.X.X
+**Issue Description**:
+**Steps to Reproduce**:
+
+1.
+2.
+3. **Expected Behavior**:
+   **Actual Behavior**:
+```
+
+## Support
+
+For version-specific help:
+
+1. Check this compatibility guide
+2. Review the [main README](README.md)
+3. Check [GitHub Issues](https://github.com/shyambaldha/laravel-log-monitor/issues)
+4. Open a new issue with version details
+
+## License
+
+This package is open-sourced software licensed under the [MIT license](LICENSE).
