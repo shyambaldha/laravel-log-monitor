@@ -12,6 +12,11 @@
         "logging"
     ],
     "license": "MIT",
+    "homepage": "https://github.com/eheuristic/laravel-log-monitor",
+    "support": {
+        "issues": "https://github.com/eheuristic/laravel-log-monitor/issues",
+        "source": "https://github.com/eheuristic/laravel-log-monitor"
+    },
     "authors": [
         {
             "name": "Shyam Baldha",
@@ -50,5 +55,6 @@
     },
     "config": {
         "sort-packages": true
-    }
+    },
+    "minimum-stability": "stable"
 }
